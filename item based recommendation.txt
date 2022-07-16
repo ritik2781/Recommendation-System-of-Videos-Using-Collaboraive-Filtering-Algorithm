@@ -1,0 +1,237 @@
+
+
+import numpy as np
+
+import pandas as pd
+
+import matplotlib.pyplot as plt
+
+from sklearn.metrics import pairwise_distances
+
+from sklearn.model_selection import KFold
+
+from sklearn.metrics import mean_absolute_error
+
+from math import sqrt
+
+u_cols = ['user_id', 'age', 'sex', 'occupation', 'zip_code']
+
+user_info = pd.read_csv('./dataset/ml-100k/u.user', sep='|', names=u_cols, encoding='latin-1', parse_dates=True)
+
+
+
+r_cols = ['user_id', 'movie_id', 'rating', 'unix_timestamp']
+
+rating_info = pd.read_csv('./dataset/ml-100k/u.data', sep='\t', names=r_cols, encoding='latin-1')
+
+
+
+m_cols = ['movie_id', 'title', 'release_date', 'video_release_date', 'imdb_url','unknown', 'Action', 'Adventure',
+
+'Animation', 'Children\'s', 'Comedy', 'Crime', 'Documentary', 'Drama', 'Fantasy','Film-Noir', 'Horror', 'Musical', 'Mystery', 'Romance', 'Sci-Fi', 'Thriller', 'War', 'Western']
+
+movie_info = pd.read_csv('./dataset/ml-100k/u.item', sep='|', names=m_cols, encoding='latin-1')
+
+
+
+user_info.head(10)
+
+rating_info.head(10)
+
+rating_info= rating_info.as_matrix()
+
+
+
+ 
+rating_info.shape
+
+movie_info.head(10)
+
+
+
+row=np.amax(rating_info[:,1], axis=0)
+
+column=np.amax(rating_info[:,0] ,axis=0)
+
+print(row,column)
+
+
+
+fold=KFold(n_splits=5,shuffle=True)
+
+print(fold)
+
+
+
+def	prediction(user_item_ratings,weights): predicted_rating=weights.dot(user_item_ratings) return predicted_rating
+
+
+def	MAE(test_data,predicted): predicted=predicted[test_data.nonzero()] test_data=test_data[test_data.nonzero()]
+return (mean_absolute_error(test_data,predicted))
+
+
+
+for train_id,test_id in fold.split(rating_info):
+
+print ("Train Indices",train_id,"Test Indices",test_id)
+
+train_matrix,test_matrix=rating_info[train_id],rating_info[test_id] train_useritem_matrix=np.zeros((row+1,column+1)) test_useritem_matrix=np.zeros((row+1,column+1))
+
+train_useritem_matrix[train_matrix[:,1],train_matrix[:,0]] = train_matrix[:,2]
+
+
+ 
+test_useritem_matrix[test_matrix[:,1],test_matrix[:,0]]=test_matrix[:,2]
+
+similarity_matrix=1-
+
+pairwise_distances(train_useritem_matrix,metric='cosine')
+
+weight_matrix= similarity_matrix/np.sum(similarity_matrix,axis=0)
+
+movie_based_prediction= prediction(train_useritem_matrix,weight_matrix)
+
+Mae=MAE(test_useritem_matrix,movie_based_prediction)
+
+print(“MAE",Mae)
+
+
+
+train_useritem_matrix.shape
+
+weight_matrix.shape
+
+
+
+def	prediction(user_item_ratings,weights): predicted_rating=weights.dot(user_item_ratings) return predicted_rating
+
+
+def	MAE(test_data,predicted): predicted=predicted[test_data.nonzero()] test_data=test_data[test_data.nonzero()]
+return (mean_absolute_error(test_data,predicted))
+
+
+
+similarity_matrix_top=np.copy(similarity_matrix)
+
+
+
+print(np.count_nonzero(similarity_matrix_top))
+
+for i in range(0,944):
+
+ind = np.argpartition(similarity_matrix[i,:], -10)[:-10] similarity_matrix_top[i,ind]=0
+
+
+ 
+print(np.count_nonzero(similarity_matrix_top))
+
+weight_matrix= similarity_matrix_top/np.sum(similarity_matrix_top,axis=0)
+
+
+
+movie_based_prediction= prediction(train_useritem_matrix,weight_matrix)
+
+Mae=MAE(test_useritem_matrix,movie_based_prediction)
+
+print("MAE for k=10”,Mae)
+
+
+
+similarity_matrix_top=np.copy(similarity_matrix)
+
+
+
+print(np.count_nonzero(similarity_matrix_top))
+
+for i in range(0,944):
+
+ind = np.argpartition(similarity_matrix[i,:], -10)[:-10] similarity_matrix_top[i,ind]=0
+
+print(np.count_nonzero(similarity_matrix_top))
+
+weight_matrix= similarity_matrix_top/np.sum(similarity_matrix_top,axis=0)
+
+
+
+movie_based_prediction= prediction(train_useritem_matrix,weight_matrix)
+
+Mae=MAE(test_useritem_matrix,movie_based_prediction)
+
+print("MAE for k=20”,Mae)
+
+
+
+similarity_matrix_top=np.copy(similarity_matrix)
+
+
+
+print(np.count_nonzero(similarity_matrix_top))
+
+for i in range(0,944):
+
+ind = np.argpartition(similarity_matrix[i,:], -10)[:-10] similarity_matrix_top[i,ind]=0
+
+
+ 
+print(np.count_nonzero(similarity_matrix_top))
+
+weight_matrix= similarity_matrix_top/np.sum(similarity_matrix_top,axis=0)
+
+
+
+movie_based_prediction= prediction(train_useritem_matrix,weight_matrix)
+
+Mae=MAE(test_useritem_matrix,movie_based_prediction)
+
+print("MAE for k=30”,Mae)
+
+
+
+similarity_matrix_top=np.copy(similarity_matrix)
+
+
+
+print(np.count_nonzero(similarity_matrix_top))
+
+for i in range(0,944):
+
+ind = np.argpartition(similarity_matrix[i,:], -10)[:-10] similarity_matrix_top[i,ind]=0
+
+print(np.count_nonzero(similarity_matrix_top))
+
+weight_matrix= similarity_matrix_top/np.sum(similarity_matrix_top,axis=0)
+
+
+
+movie_based_prediction= prediction(train_useritem_matrix,weight_matrix)
+
+Mae=MAE(test_useritem_matrix,movie_based_prediction)
+
+print("MAE for k=40”,Mae)
+
+
+
+similarity_matrix_top=np.copy(similarity_matrix)
+
+
+
+print(np.count_nonzero(similarity_matrix_top))
+
+for i in range(0,944):
+
+ind = np.argpartition(similarity_matrix[i,:], -10)[:-10] similarity_matrix_top[i,ind]=0
+
+
+ 
+print(np.count_nonzero(similarity_matrix_top))
+
+weight_matrix= similarity_matrix_top/np.sum(similarity_matrix_top,axis=0)
+
+
+
+movie_based_prediction= prediction(train_useritem_matrix,weight_matrix)
+
+Mae=MAE(test_useritem_matrix,movie_based_prediction)
+
+print("MAE for k=50”,Mae)
+

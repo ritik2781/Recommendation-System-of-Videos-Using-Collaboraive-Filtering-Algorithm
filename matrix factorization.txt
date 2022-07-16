@@ -1,0 +1,339 @@
+
+
+import pandas as pd
+
+import numpy as np
+
+import matplotlib.pyplot as plt
+
+from sklearn.metrics import mean_absolute_error
+
+from sklearn.model_selection import KFold
+
+rating_column=['user_id','movie_id','rating','timestamp']
+
+train1=pd.read_csv('./dataset/ml-100k/u1.base',sep='\t',names= rating_column,parse_dates=True)
+
+test1=pd.read_csv('./dataset/ml-100k/u1.test',sep='\t',names= rating_column,parse_dates=True)
+
+
+
+train2=pd.read_csv('./dataset/ml-100k/u2.base',sep='\t',names= rating_column,parse_dates=True)
+
+test2=pd.read_csv('./dataset/ml-100k/u2.test',sep='\t',names= rating_column,parse_dates=True)
+
+
+
+train3=pd.read_csv('./dataset/ml-100k/u3.base',sep='\t',names= rating_column,parse_dates=True)
+
+
+
+test3=pd.read_csv('./dataset/ml-100k/u3.test',sep='\t',names= rating_column,parse_dates=True)
+
+
+
+train4=pd.read_csv('./dataset/ml-100k/u4.base',sep='\t',names= rating_column,parse_dates=True)
+
+test4=pd.read_csv('./dataset/ml-100k/u4.test',sep='\t',names= rating_column,parse_dates=True)
+
+
+
+train5=pd.read_csv('./dataset/ml-100k/u5.base',sep='\t',names= rating_column,parse_dates=True)
+
+test5=pd.read_csv('./dataset/ml-100k/u5.test',sep='\t',names= rating_column,parse_dates=True)
+
+
+
+train1.head()
+
+test1.head()
+
+test1.iloc[0,0]
+
+def Mask(matrix):
+
+mask=np.zeros((num_user,num_movie))
+
+#matrix=matrix.fillna(0)
+
+for i in range(num_user):
+
+for j in range(num_movie):
+
+if(matrix[i][j]>0):
+
+mask[i][j]=matrix[i][j]
+
+return mask
+
+def Prediction(Y,mask,X,lama,iterations):
+
+for itr in range(iterations):
+
+Z = X + Y- np.multiply(mask,X)
+
+u, s, v = np.linalg.svd(Z)
+
+
+ 
+r=num_user
+
+c=num_movie
+
+sigma=np.zeros((r,c))
+
+for i in range(r):
+
+sigma[i][i]=max(0,s[i]-(lama/2))
+
+X=np.matmul(np.matmul(u,sigma),v)
+
+return X
+
+
+
+def nmse(predicted,test_data):
+
+err=0
+
+count=0
+
+for i in range(len(test_data)):
+
+for j in range(len(test_data[i])):
+
+if(test_data[i][j]!=0):
+
+err+=abs((test_data[i][j]-predicted[i][j])/4)
+
+count=count+1
+
+
+
+Nmse=err/count
+
+return Nmse
+
+
+
+num_user=944
+
+num_movie=1683
+
+
+
+Y=np.zeros((num_user,num_movie))
+
+
+
+test_matrix=np.zeros((num_user,num_movie))
+
+
+ 
+for i in range(len(train1)):
+
+Y[train1.iloc[i,0],train1.iloc[i,1]] = train1.iloc[i,2]
+
+
+
+for j in range(len(test1)):
+
+test_matrix[test1.iloc[j,0],test1.iloc[j,1]]=test1.iloc[j,2]
+
+
+
+Mask_matrix=np.zeros((944,1683))
+
+
+
+Mask_matrix=Mask(Y)
+
+
+
+X=np.random.rand(944,1683)
+
+
+
+predicted=Prediction(Y,Mask_matrix,X,0.1,100)
+
+
+
+NMSE=nmse(predicted,test_matrix)
+
+
+
+print ("NMSE :”,NMSE)
+
+
+
+Y=np.zeros((num_user,num_movie))
+
+
+
+test_matrix=np.zeros((num_user,num_movie))
+
+
+
+for i in range(len(train2)):
+
+Y[train2.iloc[i,0],train2.iloc[i,1]] = train2.iloc[i,2]
+
+
+
+for j in range(len(test2)):
+
+ 
+test_matrix[test2.iloc[j,0],test2.iloc[j,1]]=test2.iloc[j,2]
+
+
+
+Mask_matrix=np.zeros((944,1683))
+
+
+
+Mask_matrix=Mask(Y)
+
+
+
+X=np.random.rand(944,1683)
+
+
+
+predicted=Prediction(Y,Mask_matrix,X,0.1,100)
+
+
+
+NMSE=nmse(predicted,test_matrix)
+
+
+
+print ("NMSE :",NMSE)
+
+
+
+Y=np.zeros((num_user,num_movie))
+
+
+
+test_matrix=np.zeros((num_user,num_movie))
+
+
+
+for i in range(len(train3)):
+
+Y[train2.iloc[i,0],train2.iloc[i,1]] = train3.iloc[i,2]
+
+
+
+for j in range(len(test3)):
+
+test_matrix[test2.iloc[j,0],test2.iloc[j,1]]=test3.iloc[j,2]
+
+
+
+Mask_matrix=np.zeros((944,1683))
+
+
+
+Mask_matrix=Mask(Y)
+
+
+
+X=np.random.rand(944,1683)
+
+
+
+predicted=Prediction(Y,Mask_matrix,X,0.1,100)
+
+
+
+NMSE=nmse(predicted,test_matrix)
+
+
+
+print ("NMSE :",NMSE)
+
+
+
+Y=np.zeros((num_user,num_movie))
+
+
+
+test_matrix=np.zeros((num_user,num_movie))
+
+
+
+for i in range(len(train4)):
+
+Y[train4.iloc[i,0],train4.iloc[i,1]] = train4.iloc[i,2]
+
+
+
+for j in range(len(test4)):
+
+test_matrix[test4.iloc[j,0],test4.iloc[j,1]]=test4.iloc[j,2]
+
+
+
+Mask_matrix=np.zeros((944,1683))
+
+
+
+Mask_matrix=Mask(Y)
+
+
+
+X=np.random.rand(944,1683)
+
+predicted=Prediction(Y,Mask_matrix,X,0.1,100)
+
+
+NMSE=nmse(predicted,test_matrix)
+
+
+
+print ("NMSE :”,NMSE)
+
+
+
+Y=np.zeros((num_user,num_movie))
+
+
+
+test_matrix=np.zeros((num_user,num_movie))
+
+
+
+for i in range(len(train5)):
+
+Y[train5.iloc[i,0],train5.iloc[i,1]] = train5.iloc[i,2]
+
+
+
+for j in range(len(test5)):
+
+test_matrix[test5.iloc[j,0],test5.iloc[j,1]]=test5.iloc[j,2]
+
+
+
+Mask_matrix=np.zeros((944,1683))
+
+
+
+Mask_matrix=Mask(Y)
+
+
+
+X=np.random.rand(944,1683)
+
+
+
+predicted=Prediction(Y,Mask_matrix,X,0.1,100)
+
+
+
+NMSE=nmse(predicted,test_matrix)
+
+
+
+print ("NMSE :",NMSE)
